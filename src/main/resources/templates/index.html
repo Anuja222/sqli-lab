@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SQL Injection Lab</title>
+    <style>
+        body { font-family: sans-serif; max-width: 680px; margin: 40px auto; padding: 0 20px; }
+        label { display: block; margin-top: 12px; }
+        input { padding: 8px; width: 100%; box-sizing: border-box; }
+        button { margin-top: 16px; margin-right: 8px; padding: 8px 12px; }
+        pre { background: #f2f2f2; padding: 12px; white-space: pre-wrap; }
+        .warning { color: #9a3412; }
+    </style>
+</head>
+<body>
+    <h1>SQL Injection Lab</h1>
+    <p class="warning">Local learning app only. The first button intentionally uses unsafe SQL.</p>
+    <form id="login-form">
+        <label>Username <input name="username" required></label>
+        <label>Password <input name="password" required></label>
+        <button type="button" onclick="login('/login')">Try unsafe login</button>
+        <button type="button" onclick="login('/login-secure')">Try secure login</button>
+    </form>
+    <h2>Result</h2>
+    <pre id="result">Submit the form to see the response and SQL shape.</pre>
+
+    <script>
+        async function login(endpoint) {
+            const result = document.getElementById('result');
+            result.textContent = 'Sending request...';
+
+            try {
+                const form = document.getElementById('login-form');
+                const body = new URLSearchParams(new FormData(form));
+                const response = await fetch(endpoint, { method: 'POST', body });
+                const responseText = await response.text();
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${responseText}`);
+                }
+
+                result.textContent = responseText;
+            } catch (error) {
+                result.textContent = `Request failed: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
